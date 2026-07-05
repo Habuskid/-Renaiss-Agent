@@ -18,7 +18,7 @@ export default function SearchBar({ onResults, onSearching }) {
       
       try {
         const trimmed = query.trim();
-        // Smart RWA Search for BNB Hackathon
+        // Smart RWA Search and Direct Lookup for BNB Hackathon
         if (/^0x[a-fA-F0-9]{40}$/i.test(trimmed)) {
           onResults([{
             game: "pokemon",
@@ -30,6 +30,18 @@ export default function SearchBar({ onResults, onSearching }) {
             priceUsdCents: 40726,
             deltaPct: 12.4,
             href: "/card/pokemon/pokemon-japanese-cll-trading-card-game-classic-charizard-ho-oh-ex-deck/003-charizard-psa-10-japanese-2800094f"
+          }]);
+        } else if (trimmed.includes('/card/') || /^\d{15,}$/.test(trimmed) || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmed)) {
+          onResults([{
+            game: "direct-lookup",
+            type: "DIRECT",
+            name: "Direct Asset Lookup",
+            setName: "Load data directly from Renaiss Protocol",
+            gradeLabel: "Exact Match",
+            priceUsdCents: 0,
+            deltaPct: 0,
+            href: trimmed,
+            imageUrlThumb: "https://images.unsplash.com/photo-1613771404726-17b5cc95c72b?auto=format&fit=crop&q=80&w=100&h=150"
           }]);
         } else {
           const results = await searchCards(query);
