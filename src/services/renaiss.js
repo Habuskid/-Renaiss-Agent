@@ -47,7 +47,12 @@ export async function searchCards(query) {
 
 export async function getCardDetail(game, set, card) {
   try {
-    const res = await fetch(`${BASE}/v1/cards/${game}/${set}/${card}`, {
+    let url = `${BASE}/v1/cards/${game}/${set}/${card}`;
+    if (!set && !card) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(game);
+      url = isUuid ? `${BASE}/v1/cards/by-id/${game}` : `${BASE}/v1/cards/by-renaiss-id/${game}`;
+    }
+    const res = await fetch(url, {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error();
@@ -72,7 +77,12 @@ export async function getCardDetail(game, set, card) {
 
 export async function getCardTrades(game, set, card) {
   try {
-    const res = await fetch(`${BASE}/v1/cards/${game}/${set}/${card}/trades?limit=20&scope=grade`, {
+    let url = `${BASE}/v1/cards/${game}/${set}/${card}/trades?limit=20&scope=grade`;
+    if (!set && !card) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(game);
+      url = isUuid ? `${BASE}/v1/cards/by-id/${game}/trades?limit=20&scope=grade` : `${BASE}/v1/cards/by-renaiss-id/${game}/trades?limit=20&scope=grade`;
+    }
+    const res = await fetch(url, {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error();
@@ -92,7 +102,12 @@ export async function getCardTrades(game, set, card) {
 
 export async function getFmvSeries(game, set, card) {
   try {
-    const res = await fetch(`${BASE}/v1/cards/${game}/${set}/${card}/fmv-series?window=30`, {
+    let url = `${BASE}/v1/cards/${game}/${set}/${card}/fmv-series?window=30`;
+    if (!set && !card) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(game);
+      url = isUuid ? `${BASE}/v1/cards/by-id/${game}/fmv-series?window=30` : `${BASE}/v1/cards/by-renaiss-id/${game}/fmv-series?window=30`;
+    }
+    const res = await fetch(url, {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error();
