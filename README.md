@@ -1,6 +1,6 @@
 # Renaiss Agent ⚡️
 
-![Renaiss Agent Header](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop)
+![Renaiss Agent Header](./public/demo-screenshot.png)
 
 **Renaiss Agent** is an AI-powered pricing intelligence terminal built for collectors of Real World Assets (RWAs) on the **BNB Chain**. 
 
