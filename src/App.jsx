@@ -38,12 +38,16 @@ export default function App() {
       const { game, set, card: cardId } = parseHref(card.href);
       
       const [detailsData, tradesData, fmvData] = await Promise.all([
-        getCardDetail(game, set, cardId).catch(() => ({})),
+        getCardDetail(game, set, cardId).catch(() => null),
         getCardTrades(game, set, cardId).catch(() => []),
         getFmvSeries(game, set, cardId).catch(() => [])
       ]);
 
-      setCardDetails(detailsData);
+      if (!detailsData) {
+        setCardDetails({ error: 'not_found' });
+      } else {
+        setCardDetails(detailsData);
+      }
       setTrades(tradesData);
       setFmvSeries(fmvData);
     } catch (err) {
@@ -95,46 +99,57 @@ export default function App() {
         </div>
 
         {selectedCard && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-            {/* Left Column (2/3 width) */}
-            <div className="lg:col-span-2">
-              <h1 className="text-2xl font-display font-bold text-stone-900 animate-fade-up">
-                {selectedCard.name} — {selectedCard.gradeLabel}
-              </h1>
-              <p className="text-sm text-stone-500 mt-1 animate-fade-up delay-100">
-                {selectedCard.game} · {selectedCard.setName}
-              </p>
+          <div className="mt-8">
+            {loadingData ? (
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-12 border border-stone-200/50 shadow-sm text-center flex flex-col items-center min-h-[300px] justify-center">
+                <ArrowPathIcon className="w-8 h-8 text-blue-600 animate-spin mb-4" />
+                <p className="text-stone-500">Retrieving asset data from Renaiss Protocol...</p>
+              </div>
+            ) : cardDetails?.error === 'not_found' ? (
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-12 border border-stone-200/50 shadow-sm text-center min-h-[300px] flex flex-col items-center justify-center animate-fade-up">
+                <h2 className="text-2xl font-bold text-stone-900 mb-2">Asset Not Indexed</h2>
+                <p className="text-stone-500 max-w-md mx-auto">The requested asset ID could not be found in the live Renaiss database. It may not be indexed yet or the ID is invalid.</p>
+                <button onClick={() => setSelectedCard(null)} className="mt-6 bg-stone-900 text-white px-6 py-2 rounded-full font-medium hover:bg-stone-800 transition-colors shadow-sm">
+                  Clear Search
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left Column (2/3 width) */}
+                <div className="lg:col-span-2">
+                  <h1 className="text-2xl font-display font-bold text-stone-900 animate-fade-up">
+                    {selectedCard.name} — {selectedCard.gradeLabel}
+                  </h1>
+                  <p className="text-sm text-stone-500 mt-1 animate-fade-up delay-100">
+                    {selectedCard.game} · {selectedCard.setName}
+                  </p>
 
-              <StatsRow 
-                card={selectedCard} 
-                details={cardDetails} 
-              />
+                  <StatsRow 
+                    card={selectedCard} 
+                    details={cardDetails} 
+                  />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <div>
-                  <TradeHistory trades={trades} />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div>
+                      <TradeHistory trades={trades} />
+                    </div>
+                    <div>
+                      <FmvChart data={fmvSeries} />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <FmvChart data={fmvSeries} />
+
+                {/* Right Column (1/3 width) */}
+                <div className="lg:col-span-1">
+                  <AiAnalysis 
+                    card={selectedCard}
+                    details={cardDetails}
+                    trades={trades}
+                    fmvSeries={fmvSeries}
+                  />
                 </div>
               </div>
-            </div>
-
-            {/* Right Column (1/3 width) */}
-            <div className="lg:col-span-1">
-              {loadingData ? (
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-stone-200/50 shadow-sm h-full flex flex-col items-center justify-center min-h-[300px]">
-                  <ArrowPathIcon className="w-8 h-8 text-blue-600 animate-spin" />
-                </div>
-              ) : (
-                <AiAnalysis 
-                  card={selectedCard}
-                  details={cardDetails}
-                  trades={trades}
-                  fmvSeries={fmvSeries}
-                />
-              )}
-            </div>
+            )}
           </div>
         )}
       </main>
