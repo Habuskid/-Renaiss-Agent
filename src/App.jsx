@@ -44,14 +44,20 @@ export default function App() {
     try {
       const { game, set, card: cardId } = parseHref(card.href);
       
+      let cardError = null;
+      const detailsPromise = getCardDetail(game, set, cardId).catch((err) => {
+        cardError = err.message;
+        return null;
+      });
+
       const [detailsData, tradesData, fmvData] = await Promise.all([
-        getCardDetail(game, set, cardId).catch(() => null),
+        detailsPromise,
         getCardTrades(game, set, cardId).catch(() => []),
         getFmvSeries(game, set, cardId).catch(() => [])
       ]);
 
       if (!detailsData) {
-        setCardDetails({ error: 'not_found' });
+        setCardDetails({ error: cardError || 'not_found' });
       } else {
         setCardDetails(detailsData);
       }
@@ -118,6 +124,14 @@ export default function App() {
               <div className="bg-white/80 backdrop-blur-sm rounded-xl p-12 border border-stone-200/50 shadow-sm text-center flex flex-col items-center min-h-[300px] justify-center">
                 <ArrowPathIcon className="w-8 h-8 text-blue-600 animate-spin mb-4" />
                 <p className="text-stone-500">Retrieving asset data from Renaiss Protocol...</p>
+              </div>
+            ) : cardDetails?.error === 'rate_limit' ? (
+              <div className="bg-red-50/90 backdrop-blur-sm rounded-xl p-12 border border-red-200 shadow-sm text-center min-h-[300px] flex flex-col items-center justify-center animate-fade-up">
+                <h2 className="text-2xl font-bold text-red-900 mb-2">API Rate Limit Exceeded</h2>
+                <p className="text-red-700 max-w-md mx-auto">This Vercel deployment has hit the anonymous rate limit. Please ensure VITE_RENAISS_API_KEY is configured in Vercel.</p>
+                <button onClick={() => setSelectedCard(null)} className="mt-6 bg-red-900 text-white px-6 py-2 rounded-full font-medium hover:bg-red-800 transition-colors shadow-sm">
+                  Clear Search
+                </button>
               </div>
             ) : cardDetails?.error === 'not_found' ? (
               <div className="bg-white/80 backdrop-blur-sm rounded-xl p-12 border border-stone-200/50 shadow-sm text-center min-h-[300px] flex flex-col items-center justify-center animate-fade-up">

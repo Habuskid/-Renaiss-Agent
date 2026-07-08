@@ -33,7 +33,9 @@ export async function getCardDetail(game, set, card) {
   const res = await fetch(url, {
     headers: getAuthHeaders()
   });
-  if (!res.ok) throw new Error();
+  if (res.status === 429) throw new Error("rate_limit");
+  if (res.status === 404) throw new Error("not_found");
+  if (!res.ok) throw new Error("api_error");
   return await res.json();
 }
 
