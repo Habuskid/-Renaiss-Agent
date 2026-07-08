@@ -80,11 +80,15 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
         <p className="text-sm text-stone-500 mb-6 max-w-[250px]">Generate a fair market value range and conviction rating using live data.</p>
         <button 
           onClick={runAnalysis}
-          className="bg-stone-900 text-white px-6 py-2.5 rounded-full font-medium hover:bg-stone-800 transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-2"
+          className="bg-stone-900 text-white px-6 py-2.5 rounded-full font-medium hover:bg-stone-800 transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-2 mb-4"
         >
           <SparklesIcon className="w-4 h-4" />
           Generate Insight
         </button>
+        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold text-stone-400 bg-stone-100/80 px-3 py-1.5 rounded-full border border-stone-200/60">
+          <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
+          Free Tier API • 15 Requests / Min
+        </div>
       </div>
     );
   }
