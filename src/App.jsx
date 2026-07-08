@@ -22,8 +22,15 @@ export default function App() {
   const [fmvSeries, setFmvSeries] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
 
+  const [featuredError, setFeaturedError] = useState(null);
+
   useEffect(() => {
-    getFeaturedCards().then(setFeaturedCards).catch(console.error);
+    getFeaturedCards()
+      .then(setFeaturedCards)
+      .catch((err) => {
+        console.error(err);
+        setFeaturedError("API rate limit exceeded or keys missing. Please configure VITE_RENAISS_API_KEY in Vercel.");
+      });
   }, []);
 
   const handleSelectCard = async (card) => {
@@ -93,7 +100,14 @@ export default function App() {
 
           {!selectedCard && searchResults.length === 0 && !searching && (
             <div className="w-full text-left">
-              <FeaturedCards cards={featuredCards} onSelect={handleSelectCard} />
+              {featuredError ? (
+                <div className="bg-red-50 text-red-600 p-6 rounded-xl border border-red-200 text-center shadow-sm">
+                  <h3 className="font-bold text-lg mb-1">Could not load market data</h3>
+                  <p className="text-sm">{featuredError}</p>
+                </div>
+              ) : (
+                <FeaturedCards cards={featuredCards} onSelect={handleSelectCard} />
+              )}
             </div>
           )}
         </div>
