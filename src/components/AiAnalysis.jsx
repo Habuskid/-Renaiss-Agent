@@ -19,7 +19,7 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
     }
 
     if (!card || !details || !trades || !fmvSeries) return;
-    if (analysis || loading) return;
+    if (analysis || loading || error) return;
     
     const runAnalysis = async () => {
       setLoading(true);
@@ -34,7 +34,7 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
       }
     };
     runAnalysis();
-  }, [card, details, trades, fmvSeries, analysis, loading]);
+  }, [card, details, trades, fmvSeries, analysis, loading, error]);
 
   const getBuyWindowColor = (window) => {
     if (window === 'Now') return 'text-green-600 font-bold';
