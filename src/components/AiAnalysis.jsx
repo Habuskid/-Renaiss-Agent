@@ -9,48 +9,28 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [hasStarted, setHasStarted] = useState(false);
   const prevCardRef = useRef(null);
 
   useEffect(() => {
     if (card !== prevCardRef.current) {
       setAnalysis(null);
       setError(null);
+      setHasStarted(false); // Reset button state on new card
       prevCardRef.current = card;
     }
+  }, [card]);
 
+  const runAnalysis = async () => {
     if (!card || !details || !trades || !fmvSeries) return;
-    if (analysis || loading || error) return;
     
-    const runAnalysis = async () => {
-      // 1. Check Cache First
-      const cacheKey = `ai_analysis_${card.href || details?.name}`;
-      const cached = localStorage.getItem(cacheKey);
-      
-      if (cached) {
-        try {
-          const parsedCache = JSON.parse(cached);
-          // Only use cache if it's less than 1 hour old
-          if (Date.now() - parsedCache.timestamp < 3600000) {
-            setAnalysis(parsedCache.data);
-            return;
-          }
-        } catch (e) {
-          // Ignore cache parse errors
-        }
-      }
-
-      setLoading(true);
-      setError(null);
-      try {
-        const result = await analyzeCard({ cardDetail: details, trades, fmvSeries });
-        setAnalysis(result);
-        
-        // 2. Save to Cache
-        localStorage.setItem(cacheKey, JSON.stringify({
-          timestamp: Date.now(),
-          data: result
-        }));
-      } catch (err) {
+    setHasStarted(true);
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await analyzeCard({ cardDetail: details, trades, fmvSeries });
+      setAnalysis(result);
+    } catch (err) {
         // If we hit a rate limit, show a much friendlier error
         if (err.message?.includes('Quota exceeded') || err.message?.includes('429')) {
           setError('The AI is currently analyzing too many requests. Please wait a moment before trying again.');
@@ -61,8 +41,6 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
         setLoading(false);
       }
     };
-    runAnalysis();
-  }, [card, details, trades, fmvSeries, analysis, loading, error]);
 
   const getBuyWindowColor = (window) => {
     if (window === 'Now') return 'text-green-600 font-bold';
@@ -89,6 +67,23 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
           className="text-sm bg-white text-red-600 border border-red-200 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors shadow-sm"
         >
           Dismiss
+        </button>
+      </div>
+    );
+  }
+
+  if (!hasStarted) {
+    return (
+      <div className="bg-gradient-to-br from-white to-stone-50/50 backdrop-blur-sm rounded-xl p-8 border border-stone-200/50 shadow-lg flex flex-col items-center justify-center h-full min-h-[300px] animate-fade-up text-center">
+        <SparklesIcon className="w-10 h-10 text-amber-500 mb-4" />
+        <h3 className="text-lg font-bold text-stone-900 mb-2">Ready for AI Analysis</h3>
+        <p className="text-sm text-stone-500 mb-6 max-w-[250px]">Generate a fair market value range and conviction rating using live data.</p>
+        <button 
+          onClick={runAnalysis}
+          className="bg-stone-900 text-white px-6 py-2.5 rounded-full font-medium hover:bg-stone-800 transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-2"
+        >
+          <SparklesIcon className="w-4 h-4" />
+          Generate Insight
         </button>
       </div>
     );
