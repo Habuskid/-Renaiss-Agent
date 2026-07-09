@@ -55,7 +55,7 @@ export default function FmvChart({ data }) {
                 axisLine={false} 
                 tickLine={false} 
                 tick={{ fill: '#A8A29E', fontSize: 10 }}
-                tickFormatter={(value) => \`$\${value}\`}
+                tickFormatter={(value) => `$${value}`}
                 dx={-10}
               />
               <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#D6D3D1', strokeWidth: 1, strokeDasharray: '5 5' }} />
