@@ -4,21 +4,13 @@ export default function FeaturedCards({ cards, onSelect }) {
   if (!cards || cards.length === 0) return null;
 
   return (
-    <div className="mt-12 animate-fade-up">
+    <div className="mt-12 animate-fade-up delay-100">
       <div className="flex items-center gap-2 mb-6">
         <ArrowTrendingUpIcon className="w-5 h-5 text-indigo-500" />
         <h2 className="text-lg font-display font-bold text-stone-900">
-          Popular Collectibles
+          Trending Assets on BNB Chain
         </h2>
       </div>
-
-      {cards.some(c => c.isMock) && (
-        <div className="bg-amber-50 border border-amber-200/60 rounded-lg p-3 mb-6 flex items-center justify-between text-amber-800 text-sm shadow-sm animate-fade-up">
-          <div className="flex items-center gap-2">
-            <span className="font-bold">API Offline:</span> Displaying placeholder mock data for hackathon demo purposes.
-          </div>
-        </div>
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card, idx) => (
