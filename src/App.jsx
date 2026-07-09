@@ -122,10 +122,18 @@ export default function App() {
         {selectedCard && (
           <div className="mt-8">
             {loadingData ? (
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-12 border border-stone-200/50 shadow-sm text-center flex flex-col items-center min-h-[300px] justify-center">
-                <div className="card-scanner mb-6 shadow-md"></div>
-                <p className="text-stone-900 font-bold mb-1">Scanning Protocol Database</p>
-                <p className="text-stone-500 text-sm">Retrieving verified asset data and market history...</p>
+              <div className="bg-white/90 backdrop-blur-md rounded-2xl p-12 border border-stone-200/50 shadow-xl text-center flex flex-col items-center min-h-[400px] justify-center animate-fade-up">
+                <div className="relative w-12 h-12 mb-6">
+                  <svg className="animate-spin w-full h-full text-stone-900" viewBox="0 0 50 50">
+                    <circle className="opacity-20" cx="25" cy="25" r="20" fill="none" stroke="currentColor" strokeWidth="4" />
+                    <circle className="opacity-100" cx="25" cy="25" r="20" fill="none" stroke="currentColor" strokeWidth="4" strokeDasharray="90 150" strokeLinecap="round" />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-2 h-2 bg-stone-900 rounded-full animate-pulse"></div>
+                  </div>
+                </div>
+                <p className="text-xl font-display font-bold text-stone-900 mb-2">Connecting to Protocol</p>
+                <p className="text-stone-500 font-medium">Retrieving verified asset data and order books...</p>
               </div>
             ) : cardDetails?.error === 'rate_limit' ? (
               <div className="bg-red-50/90 backdrop-blur-sm rounded-xl p-12 border border-red-200 shadow-sm text-center min-h-[300px] flex flex-col items-center justify-center animate-fade-up">
@@ -146,13 +154,21 @@ export default function App() {
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column (2/3 width) */}
-                <div className="lg:col-span-2">
-                  <h1 className="text-2xl font-display font-bold text-stone-900 animate-fade-up">
-                    {selectedCard.name} — {selectedCard.gradeLabel}
-                  </h1>
-                  <p className="text-sm text-stone-500 mt-1 animate-fade-up delay-100">
-                    {selectedCard.game} · {selectedCard.setName}
-                  </p>
+                <div className="lg:col-span-2 flex flex-col gap-6">
+                  {/* Premium Title Card */}
+                  <div className="bg-white/90 backdrop-blur-sm p-8 rounded-2xl border border-stone-200/50 shadow-sm animate-fade-up card-shine">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="px-3 py-1 bg-stone-100 text-stone-600 rounded-full text-xs font-bold uppercase tracking-widest border border-stone-200">
+                        {selectedCard.game}
+                      </span>
+                      <span className="text-stone-400 text-sm font-medium">
+                        {selectedCard.setName}
+                      </span>
+                    </div>
+                    <h1 className="text-4xl lg:text-5xl font-display font-bold text-stone-900 tracking-tight leading-tight">
+                      {selectedCard.name} <span className="text-stone-400 font-light">| {selectedCard.gradeLabel}</span>
+                    </h1>
+                  </div>
 
                   <StatsRow 
                     card={selectedCard} 

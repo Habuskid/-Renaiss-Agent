@@ -4,8 +4,8 @@ export default function TradeHistory({ trades }) {
   const safeTrades = trades || [];
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-stone-200 h-full">
-      <h2 className="text-sm font-bold text-stone-900 mb-4">Recent Transactions</h2>
+    <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-stone-200/50 shadow-sm h-full animate-fade-up delay-500 card-shine">
+      <h2 className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-4 border-b border-stone-100 pb-2">Recent Transactions</h2>
       
       {safeTrades.length === 0 ? (
         <div className="text-sm text-stone-500 text-center py-4">No recent trades found.</div>

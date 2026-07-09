@@ -41,8 +41,8 @@ export default function FmvChart({ data }) {
   }, [data]);
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-stone-200/50 shadow-sm h-full flex flex-col animate-fade-up delay-200 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
-      <h2 className="text-sm font-bold text-stone-900 mb-6">30-Day Fair Market Value</h2>
+    <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-stone-200/50 shadow-sm h-full flex flex-col animate-fade-up delay-600 card-shine">
+      <h2 className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-4 border-b border-stone-100 pb-2">30-Day Fair Market Value</h2>
       
       <div className="relative flex-1 min-h-[200px] w-full mt-auto mb-2">
         {!data || data.length < 2 ? (

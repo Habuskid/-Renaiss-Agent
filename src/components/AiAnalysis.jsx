@@ -1,9 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { SparklesIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { analyzeCard } from '../services/gemini.js';
 import { formatUSD } from '../utils/formatters.js';
 import StarRating from './StarRating.jsx';
 import TrendBadge from './TrendBadge.jsx';
+
+const AiIcon = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" fill="currentColor" />
+    <circle cx="12" cy="12" r="3" fill="currentColor" className="opacity-50" />
+  </svg>
+);
 
 export default function AiAnalysis({ card, details, trades, fmvSeries }) {
   const [analysis, setAnalysis] = useState(null);
@@ -77,8 +84,16 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
 
   if (loading) {
     return (
-      <div className="ai-border-glow bg-white/90 backdrop-blur-sm rounded-2xl p-8 border border-stone-200/50 shadow-xl flex flex-col items-center justify-center text-center h-full min-h-[300px] transition-all">
-        <div className="card-scanner mb-6 shadow-md"></div>
+      <div className="bg-white/90 backdrop-blur-md rounded-2xl p-8 border border-stone-200/50 shadow-xl flex flex-col items-center justify-center text-center h-full min-h-[300px] transition-all">
+        <div className="relative w-12 h-12 mb-6">
+          <svg className="animate-spin w-full h-full text-stone-900" viewBox="0 0 50 50">
+            <circle className="opacity-20" cx="25" cy="25" r="20" fill="none" stroke="currentColor" strokeWidth="4" />
+            <circle className="opacity-100" cx="25" cy="25" r="20" fill="none" stroke="currentColor" strokeWidth="4" strokeDasharray="90 150" strokeLinecap="round" />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-2 h-2 bg-stone-900 rounded-full animate-pulse"></div>
+          </div>
+        </div>
         <p className="text-stone-900 font-bold">Analyzing 10k+ Data Points</p>
         <p className="text-sm text-stone-500 mt-1">AI is actively reviewing market data...</p>
       </div>
@@ -125,22 +140,21 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
     }
 
     return (
-      <div className="bg-gradient-to-br from-white to-stone-50/50 backdrop-blur-sm rounded-2xl p-8 border border-stone-200/50 shadow-xl flex flex-col items-center justify-center h-full min-h-[300px] animate-fade-up text-center relative overflow-hidden group">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl flex items-center justify-center shadow-inner mb-6 border border-white">
-          <SparklesIcon className="w-8 h-8 text-indigo-600" />
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 border border-stone-200/50 shadow-sm flex flex-col items-center justify-center h-full min-h-[300px] animate-fade-up text-center relative overflow-hidden group card-shine hover:shadow-md transition-all duration-500">
+        <div className="w-16 h-16 bg-stone-900 text-white rounded-2xl flex items-center justify-center shadow-lg mb-6 border border-stone-700/50">
+          <AiIcon className="w-8 h-8" />
         </div>
         <h3 className="text-xl font-bold text-stone-900 mb-2">Ready for AI Analysis</h3>
         <p className="text-sm text-stone-500 mb-8 max-w-[250px] leading-relaxed">Generate a fair market value range and conviction rating using live data.</p>
         <button 
           onClick={runAnalysis}
-          className="relative overflow-hidden bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-8 py-3.5 rounded-full font-bold shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 mb-4"
+          className="relative overflow-hidden bg-stone-900 text-white px-8 py-3.5 rounded-full font-bold shadow-[0_4px_14px_0_rgba(28,25,23,0.39)] hover:shadow-[0_6px_20px_rgba(28,25,23,0.23)] hover:bg-[rgba(41,37,36,1)] hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 mb-4 group"
         >
+          <div className="absolute inset-0 w-full h-full border border-white/20 rounded-full scale-[0.9] opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500"></div>
           <span className="relative z-10 flex items-center gap-2">
-            <SparklesIcon className="w-5 h-5" />
+            <AiIcon className="w-5 h-5" />
             Generate Insight ({3 - usageData.count} left)
           </span>
-          <div className="absolute inset-0 bg-white/20 translate-y-full hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
         </button>
       </div>
     );
@@ -156,12 +170,12 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
   }
 
   return (
-    <div className="ai-border-glow bg-white/95 backdrop-blur-md rounded-xl p-6 border border-stone-200/50 shadow-2xl h-full flex flex-col min-h-[300px] animate-fade-up">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="bg-gradient-to-br from-amber-100 to-amber-200 p-2 rounded-lg shadow-inner">
-          <SparklesIcon className="w-5 h-5 text-amber-600" />
+    <div className="bg-white/90 backdrop-blur-md rounded-2xl p-8 border border-stone-200/50 shadow-sm h-full flex flex-col min-h-[300px] animate-fade-up card-shine">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-10 h-10 bg-stone-900 text-white rounded-xl flex items-center justify-center shadow-md">
+          <AiIcon className="w-5 h-5" />
         </div>
-        <h2 className="font-bold text-stone-900 tracking-tight text-lg">AI Market Analysis</h2>
+        <h2 className="font-display font-bold text-stone-900 tracking-tight text-xl">AI Market Analysis</h2>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -190,8 +204,8 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
       </div>
 
       <div className="mt-auto animate-fade-up delay-400">
-        <p className="text-xs font-bold text-stone-900 uppercase tracking-widest mb-3">Analyst Insight</p>
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50/50 p-5 rounded-xl border border-blue-100/50 shadow-inner">
+        <p className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-3 border-b border-stone-100 pb-2">Analyst Insight</p>
+        <div className="p-2">
           <p className="text-sm text-stone-800 leading-relaxed font-medium">
             {analysis.insight}
           </p>
