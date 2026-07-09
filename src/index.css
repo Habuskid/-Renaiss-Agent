@@ -110,3 +110,15 @@ body {
 .animate-draw-line {
   animation: drawLine 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+@keyframes float3d {
+  0% { transform: translateY(0px) rotateX(5deg) rotateY(-5deg); }
+  50% { transform: translateY(-15px) rotateX(10deg) rotateY(0deg); }
+  100% { transform: translateY(0px) rotateX(5deg) rotateY(-5deg); }
+}
+
+.animate-float-3d {
+  animation: float3d 8s ease-in-out infinite;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}

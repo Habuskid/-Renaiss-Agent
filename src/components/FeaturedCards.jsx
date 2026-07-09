@@ -26,9 +26,9 @@ export default function FeaturedCards({ cards, onSelect }) {
             key={card.href}
             onClick={() => onSelect(card)}
             className={`
-              bg-white/60 backdrop-blur-md border border-stone-200/50 
-              rounded-xl p-4 cursor-pointer shadow-sm
-              hover:shadow-lg hover:-translate-y-1 hover:border-indigo-300/50
+              bg-white border border-stone-200/80 
+              rounded-xl p-4 cursor-pointer shadow-md
+              hover:shadow-xl hover:-translate-y-2 hover:border-indigo-300/80
               transition-all duration-300 card-shine
               delay-${(idx + 1) * 100}
               animate-fade-up

@@ -79,7 +79,7 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-6 py-8 relative z-10">
         
         {!isAppLaunched ? (
-          <LandingPage onLaunch={() => setIsAppLaunched(true)} />
+          <LandingPage onLaunch={() => setIsAppLaunched(true)} featuredCards={featuredCards} />
         ) : (
           <>
             <div className={`transition-all duration-500 flex flex-col ${!selectedCard ? 'items-center justify-center min-h-[60vh] text-center' : 'items-start justify-start'}`}>
