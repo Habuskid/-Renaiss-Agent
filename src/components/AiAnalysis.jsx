@@ -180,41 +180,68 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
 
   return (
     <div className="bg-white/90 backdrop-blur-md rounded-2xl p-8 border border-stone-200/50 shadow-sm h-full flex flex-col min-h-[300px] animate-fade-up card-shine">
-      <div className="flex items-center gap-3 mb-8">
+      <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 bg-stone-900 text-white rounded-xl flex items-center justify-center shadow-md">
           <AiIcon className="w-5 h-5" />
         </div>
         <h2 className="font-display font-bold text-stone-900 tracking-tight text-xl">AI Market Analysis</h2>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-stone-50/50 backdrop-blur-sm p-4 rounded-xl border border-stone-100 shadow-sm animate-fade-up delay-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
-          <p className="text-[11px] font-bold text-stone-700 uppercase tracking-widest">Fair Value Range</p>
-          <p className="text-lg font-bold text-stone-900 mt-1.5">
-            {formatUSD(analysis.fairValueLow)} - {formatUSD(analysis.fairValueHigh)}
-          </p>
+      <div className="flex flex-col gap-6 mb-6">
+        {/* Terminal/JSON Block */}
+        <div className="bg-stone-900 rounded-xl p-5 shadow-inner border border-stone-800 relative overflow-hidden group animate-fade-up delay-100">
+          <div className="flex items-center justify-between mb-3 border-b border-stone-800 pb-2">
+            <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
+              <svg className="w-3 h-3 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M4 18h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Terminal Output
+            </span>
+            <span className="text-[9px] text-green-400 font-mono flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> VERIFIED
+            </span>
+          </div>
+          <pre className="font-mono text-[11px] text-stone-300 overflow-x-auto leading-relaxed">
+            <code>
+{`{
+  "asset": "${card?.name}",
+  "fairValue": "${formatUSD(analysis.fairValueLow)} - ${formatUSD(analysis.fairValueHigh)}",
+  "buyWindow": "${analysis.buyWindow}",
+  "marketTrend": "${analysis.trend}",
+  "confidence": "${analysis.rating}/5"
+}`}
+            </code>
+          </pre>
         </div>
-        <div className="bg-stone-50/50 backdrop-blur-sm p-4 rounded-xl border border-stone-100 shadow-sm animate-fade-up delay-200 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
-          <p className="text-[11px] font-bold text-stone-700 uppercase tracking-widest">Buy Window</p>
-          <p className={`text-lg mt-1.5 ${getBuyWindowColor(analysis.buyWindow)}`}>
-            {analysis.buyWindow}
-          </p>
-        </div>
-        <div className="bg-stone-50/50 backdrop-blur-sm p-4 rounded-xl border border-stone-100 shadow-sm animate-fade-up delay-300 hover:-translate-y-1 hover:shadow-md transition-all duration-300 flex flex-col justify-center">
-          <p className="text-[11px] font-bold text-stone-700 uppercase tracking-widest mb-1.5">Market Trend</p>
+
+        {/* Human Readable Blocks */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 px-2 animate-fade-up delay-200">
           <div>
+            <p className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-1">Fair Value Range</p>
+            <p className="text-xl font-bold text-stone-900">
+              {formatUSD(analysis.fairValueLow)} - {formatUSD(analysis.fairValueHigh)}
+            </p>
+          </div>
+          <div>
+            <p className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-1">Buy Window</p>
+            <p className={`text-xl ${getBuyWindowColor(analysis.buyWindow)}`}>
+              {analysis.buyWindow}
+            </p>
+          </div>
+          <div>
+            <p className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-1.5">Market Trend</p>
             <TrendBadge trend={analysis.trend} />
           </div>
-        </div>
-        <div className="bg-stone-50/50 backdrop-blur-sm p-4 rounded-xl border border-stone-100 shadow-sm animate-fade-up delay-400 hover:-translate-y-1 hover:shadow-md transition-all duration-300 flex flex-col justify-center">
-          <p className="text-[11px] font-bold text-stone-700 uppercase tracking-widest mb-1.5">Conviction Rating</p>
-          <StarRating rating={analysis.rating} />
+          <div>
+            <p className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-1.5">Conviction</p>
+            <StarRating rating={analysis.rating} />
+          </div>
         </div>
       </div>
 
-      <div className="mt-auto animate-fade-up delay-400">
+      <div className="mt-auto animate-fade-up delay-300">
         <p className="text-[11px] font-bold text-stone-700 uppercase tracking-widest mb-3 border-b border-stone-100 pb-2">Analyst Insight</p>
-        <div className="p-2">
+        <div className="px-2">
           <p className="text-sm text-stone-800 leading-relaxed font-medium">
             {analysis.insight}
           </p>

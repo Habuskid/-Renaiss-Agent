@@ -33,34 +33,50 @@ export default function SearchBar({ onResults, onSearching }) {
 
   return (
     <div className="relative w-full">
-      <MagnifyingGlassIcon className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" />
-      
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Enter asset name or ID to run terminal analysis..."
-        className="w-full py-4 pl-12 pr-[100px] text-[15px] bg-white border-2 border-stone-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 placeholder:text-stone-400 shadow-sm transition-all"
-      />
-
-      <div className="absolute right-2 top-2 bottom-2 flex items-center gap-2">
-        {loading && (
-          <ArrowPathIcon className="w-4 h-4 text-blue-500 animate-spin" />
-        )}
+      <div className="relative">
+        <MagnifyingGlassIcon className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" />
         
-        {!loading && query.length > 0 && (
-          <XMarkIcon 
-            className="w-4 h-4 text-stone-400 hover:text-stone-600 cursor-pointer transition-colors"
-            onClick={() => setQuery('')}
-          />
-        )}
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Enter asset name to run terminal analysis..."
+          className="w-full py-4 pl-12 pr-[100px] text-[15px] bg-white border-2 border-stone-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 placeholder:text-stone-400 shadow-sm transition-all"
+        />
 
-        <button 
-          onClick={() => {}} // Auto-searches via useEffect, button is for UX confidence
-          className="bg-stone-900 text-white px-4 h-full rounded-lg text-sm font-medium hover:bg-stone-800 transition-colors shadow-sm"
-        >
-          Search
-        </button>
+        <div className="absolute right-2 top-2 bottom-2 flex items-center gap-2">
+          {loading && (
+            <ArrowPathIcon className="w-4 h-4 text-blue-500 animate-spin" />
+          )}
+          
+          {!loading && query.length > 0 && (
+            <XMarkIcon 
+              className="w-4 h-4 text-stone-400 hover:text-stone-600 cursor-pointer transition-colors"
+              onClick={() => setQuery('')}
+            />
+          )}
+
+          <button 
+            onClick={() => {}} // Auto-searches via useEffect
+            className="bg-stone-900 text-white px-4 h-full rounded-lg text-sm font-medium hover:bg-stone-800 transition-colors shadow-sm"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+      
+      <div className="flex items-center gap-3 mt-4 text-xs font-medium text-stone-500 overflow-x-auto pb-2 scrollbar-hide">
+        <span className="whitespace-nowrap uppercase tracking-widest font-bold text-stone-400">Suggestions:</span>
+        {['Charizard', 'Luffy', 'Pikachu', 'Ogerpon', 'Blue-Eyes'].map((suggestion) => (
+          <button
+            key={suggestion}
+            type="button"
+            onClick={() => setQuery(suggestion)}
+            className="px-3 py-1.5 bg-white border border-stone-200 rounded-full hover:bg-stone-50 hover:border-stone-300 transition-colors whitespace-nowrap shadow-sm"
+          >
+            {suggestion}
+          </button>
+        ))}
       </div>
     </div>
   );
