@@ -27,7 +27,7 @@ When you select an asset, the terminal will populate with:
 - **Trade Ledger:** A history of recent transactions across marketplaces like eBay, Goldin, and SNKRDUNK.
 - **FMV Chart:** A visual plot of the card's 30-day price trajectory.
 - **AI Market Analysis (The Magic):** An illuminated panel on the right side will display a **Generate Insight** button. 
-  - *Note on Rate Limits:* The Gemini AI runs on a Free Tier API limited to 15 requests per minute. We placed it behind a button so you can freely browse the app without accidentally exhausting the global quota!
+  - *Note on Rate Limits:* To simulate a real-world SaaS paywall and protect the API quota, each device is granted **3 Free AI Generations**. Once exhausted, a premium paywall will appear. The limit resets automatically every 12 hours.
   - Click the button to generate the `Fair Value Range`, `Buy Window`, `Conviction Rating`, and a detailed `Analyst Insight`.
 
 ## ⚙️ Local Setup Instructions

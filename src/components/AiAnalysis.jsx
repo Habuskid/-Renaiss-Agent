@@ -10,9 +10,20 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [hasStarted, setHasStarted] = useState(false);
-  const [usageCount, setUsageCount] = useState(() => {
-    return parseInt(localStorage.getItem('renaiss_ai_usage') || '0', 10);
+  
+  const [usageData, setUsageData] = useState(() => {
+    const count = parseInt(localStorage.getItem('renaiss_ai_usage') || '0', 10);
+    const resetTime = parseInt(localStorage.getItem('renaiss_ai_reset') || '0', 10);
+    
+    // If the 12 hour timer has expired, reset the count to 0
+    if (resetTime > 0 && Date.now() > resetTime) {
+      localStorage.setItem('renaiss_ai_usage', '0');
+      localStorage.setItem('renaiss_ai_reset', '0');
+      return { count: 0, resetTime: 0 };
+    }
+    return { count, resetTime };
   });
+
   const prevCardRef = useRef(null);
 
   useEffect(() => {
@@ -26,7 +37,7 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
 
   const runAnalysis = async () => {
     if (!card || !details || !trades || !fmvSeries) return;
-    if (usageCount >= 3) return; // safeguard
+    if (usageData.count >= 3) return; // safeguard
     
     setHasStarted(true);
     setLoading(true);
@@ -35,8 +46,16 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
       const result = await analyzeCard({ cardDetail: details, trades, fmvSeries });
       setAnalysis(result);
       
-      const newCount = usageCount + 1;
-      setUsageCount(newCount);
+      const newCount = usageData.count + 1;
+      let newResetTime = usageData.resetTime;
+      
+      // Start the 12-hour cooldown timer on the first usage
+      if (newCount === 1) {
+        newResetTime = Date.now() + (12 * 60 * 60 * 1000);
+        localStorage.setItem('renaiss_ai_reset', newResetTime.toString());
+      }
+      
+      setUsageData({ count: newCount, resetTime: newResetTime });
       localStorage.setItem('renaiss_ai_usage', newCount.toString());
     } catch (err) {
         // If we hit a rate limit, show a much friendlier error
@@ -81,7 +100,11 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
   }
 
   if (!hasStarted) {
-    if (usageCount >= 3) {
+    if (usageData.count >= 3) {
+      // Calculate remaining hours
+      const remainingMs = usageData.resetTime - Date.now();
+      const remainingHours = Math.max(1, Math.ceil(remainingMs / (1000 * 60 * 60)));
+
       return (
         <div className="bg-gradient-to-br from-stone-50 to-stone-100 backdrop-blur-sm rounded-xl p-8 border border-stone-200/50 shadow-inner flex flex-col items-center justify-center h-full min-h-[300px] animate-fade-up text-center">
           <SparklesIcon className="w-10 h-10 text-stone-300 mb-4" />
@@ -91,8 +114,8 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
             disabled
             className="bg-stone-300 text-stone-500 px-6 py-2.5 rounded-full font-medium cursor-not-allowed shadow-inner flex items-center gap-2 mb-4"
           >
-            <SparklesIcon className="w-4 h-4" />
-            Upgrade to Premium
+            <ArrowPathIcon className="w-4 h-4" />
+            Resets in {remainingHours} hours
           </button>
           <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold text-stone-400 bg-stone-200/50 px-3 py-1.5 rounded-full border border-stone-200">
             3 / 3 Used
@@ -111,7 +134,7 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
           className="bg-stone-900 text-white px-6 py-2.5 rounded-full font-medium hover:bg-stone-800 transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-2 mb-4"
         >
           <SparklesIcon className="w-4 h-4" />
-          Generate Insight ({3 - usageCount} left)
+          Generate Insight ({3 - usageData.count} left)
         </button>
       </div>
     );
