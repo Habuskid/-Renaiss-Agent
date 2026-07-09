@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import LandingPage from './components/LandingPage.jsx';
 import Header from './components/Header.jsx';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import SearchBar from './components/SearchBar.jsx';
@@ -15,6 +16,7 @@ export default function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [featuredCards, setFeaturedCards] = useState([]);
+  const [isAppLaunched, setIsAppLaunched] = useState(false);
   
   const [selectedCard, setSelectedCard] = useState(null);
   const [cardDetails, setCardDetails] = useState(null);
@@ -72,51 +74,44 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-parchment font-sans text-stone-900 mesh-bg overflow-hidden relative">
-      <Header />
+      <Header isAppLaunched={isAppLaunched} onToggleApp={() => setIsAppLaunched(!isAppLaunched)} />
       
       <main className="max-w-7xl mx-auto px-6 py-8 relative z-10">
         
-        <div className={`transition-all duration-500 flex flex-col ${!selectedCard ? 'items-center justify-center min-h-[60vh] text-center' : 'items-start justify-start'}`}>
-          
-          {!selectedCard && (
-            <div className="animate-fade-up">
-              <h1 className="text-5xl font-display font-bold text-stone-900 mb-4 tracking-tight">
-                Pricing Intelligence for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Real World Assets</span>
-              </h1>
-              <p className="text-stone-500 max-w-xl mx-auto mb-10">
-                The first AI-driven terminal on BNB Chain to analyze physical collectibles. Search by asset name or paste a Renaiss URL to determine its fair market value.
-              </p>
-            </div>
-          )}
-
-          <div className={`w-full max-w-2xl relative z-20 ${!selectedCard ? 'mb-16' : 'mb-8'}`}>
-            <SearchBar 
-              onResults={setSearchResults} 
-              onSearching={setSearching} 
-            />
-            {searchResults.length > 0 && (
-              <div className="absolute top-full left-0 w-full mt-2 text-left">
-                <SearchResults 
-                  results={searchResults} 
-                  onSelect={handleSelectCard} 
+        {!isAppLaunched ? (
+          <LandingPage onLaunch={() => setIsAppLaunched(true)} />
+        ) : (
+          <>
+            <div className={`transition-all duration-500 flex flex-col ${!selectedCard ? 'items-center justify-center min-h-[60vh] text-center' : 'items-start justify-start'}`}>
+              
+              <div className={`w-full max-w-2xl relative z-20 ${!selectedCard ? 'mb-16' : 'mb-8'}`}>
+                <SearchBar 
+                  onResults={setSearchResults} 
+                  onSearching={setSearching} 
                 />
+                {searchResults.length > 0 && (
+                  <div className="absolute top-full left-0 w-full mt-2 text-left">
+                    <SearchResults 
+                      results={searchResults} 
+                      onSelect={handleSelectCard} 
+                    />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {!selectedCard && searchResults.length === 0 && !searching && (
-            <div className="w-full text-left">
-              {featuredError ? (
-                <div className="bg-red-50 text-red-600 p-6 rounded-xl border border-red-200 text-center shadow-sm">
-                  <h3 className="font-bold text-lg mb-1">Could not load market data</h3>
-                  <p className="text-sm">{featuredError}</p>
+              {!selectedCard && searchResults.length === 0 && !searching && (
+                <div className="w-full text-left">
+                  {featuredError ? (
+                    <div className="bg-red-50 text-red-600 p-6 rounded-xl border border-red-200 text-center shadow-sm">
+                      <h3 className="font-bold text-lg mb-1">Could not load market data</h3>
+                      <p className="text-sm">{featuredError}</p>
+                    </div>
+                  ) : (
+                    <FeaturedCards cards={featuredCards} onSelect={handleSelectCard} />
+                  )}
                 </div>
-              ) : (
-                <FeaturedCards cards={featuredCards} onSelect={handleSelectCard} />
               )}
             </div>
-          )}
-        </div>
 
         {selectedCard && (
           <div className="mt-8">
@@ -179,6 +174,8 @@ export default function App() {
               </div>
             )}
           </div>
+        )}
+        </>
         )}
       </main>
     </div>
