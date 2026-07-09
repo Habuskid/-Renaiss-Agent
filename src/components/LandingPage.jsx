@@ -36,62 +36,95 @@ export default function LandingPage({ onLaunch, featuredCards = [] }) {
         </div>
       </div>
 
-      {/* Premium Side-by-Side Collection Row */}
-      <div className="mb-24 relative z-10">
-        <div className="flex items-center justify-between mb-6 animate-fade-up delay-300">
-          <h3 className="text-sm font-bold text-stone-500 uppercase tracking-widest">Trending Collections</h3>
-          <div className="h-[1px] flex-1 mx-4 bg-gradient-to-r from-stone-200 to-transparent"></div>
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {bgCards.length > 0 ? (
-            bgCards.map((card, index) => (
+      {/* Scattered Floating Cards (Left/Right Side by Side) */}
+      <div className="absolute inset-0 pointer-events-none z-[-5] overflow-hidden hidden md:block">
+        {bgCards.length > 0 ? (
+          bgCards.map((card, index) => {
+            const positions = [
+              { top: '10%', left: '5%', delay: '0s', scale: '0.85', rotate: '-6deg' },
+              { top: '45%', left: '10%', delay: '2s', scale: '0.75', rotate: '8deg' },
+              { top: '15%', right: '5%', delay: '1s', scale: '0.9', rotate: '12deg' },
+              { top: '50%', right: '8%', delay: '3s', scale: '0.8', rotate: '-10deg' },
+            ];
+            const pos = positions[index] || positions[0];
+
+            return (
               <div 
                 key={card.href || card.name}
-                className={`bg-white p-4 rounded-2xl border border-stone-200/60 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-2 transition-all duration-300 ease-out cursor-pointer group animate-fade-up`}
-                style={{ animationDelay: `${300 + (index * 100)}ms` }}
-                onClick={onLaunch}
+                className="absolute pointer-events-auto z-0 hover:z-50"
+                style={{
+                  top: pos.top,
+                  left: pos.left,
+                  right: pos.right,
+                }}
               >
-                <div className="w-full aspect-[3/4] rounded-xl overflow-hidden bg-stone-100 mb-4 shadow-inner relative">
-                  <div className="absolute inset-0 bg-stone-900/10 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
-                  <img 
-                    src={card.imageUrlThumb || card.imageUrl} 
-                    alt={card.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="text-left px-1">
-                  <h4 className="font-bold text-stone-900 text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">{card.name}</h4>
-                  <p className="text-xs text-stone-500 mt-1 font-medium">{card.gradeLabel}</p>
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="font-mono text-sm font-bold text-stone-900">
-                      ${(card.priceUsdCents / 100).toLocaleString(undefined, {minimumFractionDigits: 2})}
-                    </span>
-                    <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">View</span>
+                <div 
+                  className="animate-float-3d w-48"
+                  style={{ 
+                    animationDelay: pos.delay,
+                    transform: `scale(${pos.scale}) rotate(${pos.rotate})`
+                  }}
+                >
+                  <div className="bg-white p-3 rounded-2xl shadow-xl border border-stone-200 w-full opacity-60 hover:opacity-100 hover:scale-110 hover:-translate-y-4 transition-all duration-200 ease-out cursor-pointer" onClick={onLaunch}>
+                    <div className="w-full h-56 rounded-lg overflow-hidden bg-stone-100 mb-3 shadow-inner">
+                      <img 
+                        src={card.imageUrlThumb || card.imageUrl} 
+                        alt={card.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="text-left px-1">
+                      <h4 className="font-bold text-stone-900 text-sm line-clamp-1">{card.name}</h4>
+                      <p className="text-xs text-stone-500 mt-0.5">{card.gradeLabel}</p>
+                      <div className="mt-2 font-mono text-sm font-semibold text-stone-900">
+                        ${(card.priceUsdCents / 100).toLocaleString(undefined, {minimumFractionDigits: 2})}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            ))
-          ) : (
-            /* Skeleton Loaders for Instant Rendering */
-            [...Array(4)].map((_, index) => (
+            );
+          })
+        ) : (
+          [...Array(4)].map((_, index) => {
+            const positions = [
+              { top: '10%', left: '5%', delay: '0s', scale: '0.85', rotate: '-6deg' },
+              { top: '45%', left: '10%', delay: '2s', scale: '0.75', rotate: '8deg' },
+              { top: '15%', right: '5%', delay: '1s', scale: '0.9', rotate: '12deg' },
+              { top: '50%', right: '8%', delay: '3s', scale: '0.8', rotate: '-10deg' },
+            ];
+            const pos = positions[index] || positions[0];
+
+            return (
               <div 
-                key={`skeleton-${index}`}
-                className="bg-white p-4 rounded-2xl border border-stone-200/60 shadow-sm animate-fade-up"
-                style={{ animationDelay: `${300 + (index * 100)}ms` }}
+                key={`skeleton-float-${index}`}
+                className="absolute pointer-events-auto z-0"
+                style={{
+                  top: pos.top,
+                  left: pos.left,
+                  right: pos.right,
+                }}
               >
-                <div className="w-full aspect-[3/4] rounded-xl bg-stone-200 animate-pulse mb-4"></div>
-                <div className="px-1">
-                  <div className="h-4 bg-stone-200 animate-pulse rounded-full w-3/4 mb-2"></div>
-                  <div className="h-3 bg-stone-200 animate-pulse rounded-full w-1/2 mb-4"></div>
-                  <div className="flex items-center justify-between">
-                    <div className="h-4 bg-stone-200 animate-pulse rounded-full w-1/3"></div>
-                    <div className="h-5 bg-stone-200 animate-pulse rounded-md w-10"></div>
+                <div 
+                  className="animate-float-3d w-48"
+                  style={{ 
+                    animationDelay: pos.delay,
+                    transform: `scale(${pos.scale}) rotate(${pos.rotate})`
+                  }}
+                >
+                  <div className="bg-white p-3 rounded-2xl shadow-xl border border-stone-200 w-full opacity-60">
+                    <div className="w-full h-56 rounded-lg bg-stone-200 animate-pulse mb-3 shadow-inner"></div>
+                    <div className="px-1">
+                      <div className="h-4 bg-stone-200 animate-pulse rounded-full w-3/4 mb-1"></div>
+                      <div className="h-3 bg-stone-200 animate-pulse rounded-full w-1/2 mb-3"></div>
+                      <div className="h-4 bg-stone-200 animate-pulse rounded-full w-1/3"></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            );
+          })
+        )}
       </div>
 
       {/* Features Grid */}
