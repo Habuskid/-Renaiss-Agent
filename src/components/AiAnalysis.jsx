@@ -212,14 +212,15 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
             <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
             <span className="ml-3 text-[10px] font-mono text-stone-500">renaiss-terminal ~ /output</span>
           </div>
-          <pre className="font-mono text-xs text-blue-100/80 overflow-x-auto leading-relaxed">
+          <pre className="font-mono text-xs text-blue-100/80 overflow-x-auto whitespace-pre-wrap break-words leading-relaxed">
             <code>
 {`{
   "asset": "${card?.name}",
   "fairValue": "${formatUSD(analysis.fairValueLow)} - ${formatUSD(analysis.fairValueHigh)}",
   "buyWindow": "${analysis.buyWindow}",
   "marketTrend": "${analysis.trend}",
-  "confidence": "${analysis.rating}/5"
+  "confidence": "${analysis.rating}/5",
+  "insight": "${analysis.insight}"
 }`}
             </code>
           </pre>
@@ -260,17 +261,6 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
             <StarRating rating={analysis.rating} />
           </div>
         </div>
-      </div>
-
-      <div className="mt-auto pt-6 border-t border-stone-100 relative">
-        <div className="absolute top-0 left-0 w-12 h-[1px] bg-gradient-to-r from-blue-500 to-transparent"></div>
-        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-3 flex items-center gap-2">
-          <SparklesIcon className="w-3 h-3" />
-          Analyst Insight
-        </p>
-        <p className="text-sm text-stone-700 leading-relaxed font-medium">
-          {analysis.insight}
-        </p>
       </div>
     </div>
   );
