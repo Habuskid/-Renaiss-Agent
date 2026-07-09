@@ -111,7 +111,7 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
         </div>
         <h3 className="text-lg font-bold text-white mb-2 tracking-wide">Analysis Paused</h3>
         <p className="text-red-200/80 font-medium mb-6 max-w-[250px] leading-relaxed text-sm">
-          {error.includes('many requests') ? "System is analyzing too many active requests. Please stand by." : error}
+          {error.includes('many requests') ? "Hit limit. Try again in 10 minutes." : error}
         </p>
         <button 
           onClick={() => setError(null)}
@@ -157,9 +157,9 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
         <p className="text-sm text-stone-500 mb-8 max-w-[250px] leading-relaxed">Generate a fair market value range and conviction rating using live data.</p>
         <button 
           onClick={runAnalysis}
-          className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 animate-gradient-xy text-white px-8 py-3.5 rounded-full font-bold shadow-[0_0_30px_rgba(79,70,229,0.4)] hover:shadow-[0_0_40px_rgba(79,70,229,0.6)] hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 mb-4 group border border-white/20"
+          className="relative overflow-hidden bg-stone-900 text-white px-8 py-3.5 rounded-full font-bold shadow-[0_4px_14px_0_rgba(28,25,23,0.39)] hover:shadow-[0_6px_20px_rgba(28,25,23,0.23)] hover:bg-[rgba(41,37,36,1)] hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 mb-4 group border border-stone-700/50"
         >
-          <div className="absolute inset-0 bg-white/20 translate-y-full hover:translate-y-0 transition-transform duration-300 ease-in-out mix-blend-overlay"></div>
+          <div className="absolute inset-0 w-full h-full border border-white/20 rounded-full scale-[0.9] opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 mix-blend-overlay"></div>
           <span className="relative z-10 flex items-center gap-2">
             <AiIcon className="w-5 h-5" />
             Generate Insight ({3 - usageData.count} left)
