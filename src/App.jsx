@@ -134,7 +134,7 @@ export default function App() {
                   </div>
                 </div>
                 <p className="text-xl font-display font-bold text-stone-900 mb-2">Fetching Market Data</p>
-                <p className="text-stone-500 font-medium">Loading card details and recent sales from the API...</p>
+                <p className="text-stone-500 font-medium">Loading collection details...</p>
               </div>
             ) : cardDetails?.error === 'rate_limit' ? (
               <div className="bg-red-50/90 backdrop-blur-sm rounded-xl p-12 border border-red-200 shadow-sm text-center min-h-[300px] flex flex-col items-center justify-center animate-fade-up">
