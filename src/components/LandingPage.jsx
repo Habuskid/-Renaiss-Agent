@@ -21,40 +21,60 @@ export default function LandingPage({ onLaunch, featuredCards = [] }) {
 
           return (
             <div 
-              key={card.name}
-              className="absolute animate-float-3d opacity-20 blur-[2px] grayscale-[30%]"
+              key={card.href || card.name}
+              className="absolute pointer-events-auto group z-0 hover:z-50"
               style={{
                 top: pos.top,
                 bottom: pos.bottom,
                 left: pos.left,
                 right: pos.right,
-                transform: `scale(${pos.scale}) rotate(${pos.rotate})`,
-                animationDelay: pos.delay
+                transform: `scale(${pos.scale}) rotate(${pos.rotate})`
               }}
             >
-              <img 
-                src={card.image} 
-                alt={card.name}
-                className="w-48 h-64 object-cover rounded-xl shadow-2xl border border-white/20"
-              />
+              <div 
+                className="animate-float-3d opacity-60 transition-all duration-500 group-hover:opacity-100 cursor-pointer"
+                style={{ animationDelay: pos.delay }}
+              >
+                <div className="bg-white p-3 rounded-2xl shadow-xl border border-stone-200 w-48 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-4">
+                  <div className="w-full h-56 rounded-lg overflow-hidden bg-stone-100 mb-3 shadow-inner">
+                    <img 
+                      src={card.imageUrlThumb || card.imageUrl} 
+                      alt={card.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="font-bold text-stone-900 text-sm line-clamp-1">{card.name}</h4>
+                    <p className="text-xs text-stone-500 mt-0.5">{card.gradeLabel}</p>
+                    <div className="mt-2 font-mono text-sm font-semibold text-stone-900">
+                      ${(card.priceUsdCents / 100).toLocaleString(undefined, {minimumFractionDigits: 2})}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           );
         })}
       </div>
       {/* Hero Section */}
-      <div className="text-center max-w-4xl mx-auto mb-20 relative">
+      <div className="text-center max-w-4xl mx-auto mb-20 relative z-10">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-400/10 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
         
-        <h1 className="text-5xl lg:text-7xl font-display font-bold text-stone-900 tracking-tight leading-tight mb-6">
-          Pricing Intelligence for <br/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Real World Assets</span>
+        <h1 className="text-5xl lg:text-7xl font-display font-bold text-stone-900 tracking-tight leading-tight mb-6 animate-fade-up delay-100 cursor-default">
+          <span className="inline-block transition-all duration-150 ease-out hover:-translate-y-3 hover:scale-110 hover:text-blue-600 mr-3">Pricing</span>
+          <span className="inline-block transition-all duration-150 ease-out hover:-translate-y-3 hover:scale-110 hover:text-blue-600 mr-3">Intelligence</span>
+          <span className="inline-block transition-all duration-150 ease-out hover:-translate-y-3 hover:scale-110 hover:text-blue-600">for</span>
+          <br/>
+          <span className="inline-block transition-all duration-150 ease-out hover:-translate-y-3 hover:scale-110 mr-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500">Real</span>
+          <span className="inline-block transition-all duration-150 ease-out hover:-translate-y-3 hover:scale-110 mr-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500">World</span>
+          <span className="inline-block transition-all duration-150 ease-out hover:-translate-y-3 hover:scale-110 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500">Assets</span>
         </h1>
-        <p className="text-lg lg:text-xl text-stone-500 mb-10 max-w-2xl mx-auto">
+        <p className="text-lg lg:text-xl text-stone-600 mb-10 max-w-2xl mx-auto animate-fade-up delay-200">
           The first AI-driven terminal to analyze physical collectibles on Renaiss. 
           Get instant fair market value, liquidity scores, and investment insights powered by Ai.
         </p>
         
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-4 animate-fade-up delay-300">
           <button 
             onClick={onLaunch}
             className="group flex items-center gap-3 bg-stone-900 text-white px-8 py-4 rounded-full font-medium text-lg hover:bg-stone-800 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1"
@@ -67,33 +87,33 @@ export default function LandingPage({ onLaunch, featuredCards = [] }) {
 
       {/* Features Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24">
-        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300 delay-100 animate-fade-up group">
+        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-md hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] hover:scale-110 hover:-translate-y-6 transition-all duration-500 ease-out delay-100 animate-fade-up group cursor-default">
           <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
             <PresentationChartLineIcon className="w-7 h-7" />
           </div>
-          <h3 className="text-xl font-bold text-stone-900 mb-3">Live Market Data</h3>
+          <h3 className="text-xl font-bold text-stone-900 mb-3">Real-Time Valuation</h3>
           <p className="text-stone-500 leading-relaxed">
-            We aggregate recent sales from eBay, Goldin, and PWCC to plot the true fair market value over time, tracking volatility and moving averages.
+            Instantly determine the fair market value of physical collectibles. Search by asset name to unlock real-time pricing intelligence.
           </p>
         </div>
 
-        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300 delay-200 animate-fade-up group">
+        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-md hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] hover:scale-110 hover:-translate-y-6 transition-all duration-500 ease-out delay-200 animate-fade-up group cursor-default">
           <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
             <CpuChipIcon className="w-7 h-7" />
           </div>
-          <h3 className="text-xl font-bold text-stone-900 mb-3">AI Deep Analysis</h3>
+          <h3 className="text-xl font-bold text-stone-900 mb-3">AI-Powered Analysis</h3>
           <p className="text-stone-500 leading-relaxed">
-            Our multi-modal AI reads raw card data, evaluates set rarity, checks historical price action, and writes a professional investment brief.
+            Our advanced AI engine evaluates physical assets to provide accurate liquidity scores, market volatility metrics, and comprehensive investment insights.
           </p>
         </div>
 
-        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300 delay-300 animate-fade-up group">
+        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-md hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] hover:scale-110 hover:-translate-y-6 transition-all duration-500 ease-out delay-300 animate-fade-up group cursor-default">
           <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
             <CheckBadgeIcon className="w-7 h-7" />
           </div>
-          <h3 className="text-xl font-bold text-stone-900 mb-3">BNB Chain Verified</h3>
+          <h3 className="text-xl font-bold text-stone-900 mb-3">Renaiss Protocol Native</h3>
           <p className="text-stone-500 leading-relaxed">
-            Powered by the robust infrastructure of Renaiss Protocol. Assets are fully verified on-chain to prevent counterfeits and ensure absolute provenance.
+            Powered by the Renaiss Protocol on BNB Chain. Our terminal brings verified transparency to physical assets indexed exclusively within the Renaiss ecosystem.
           </p>
         </div>
       </div>

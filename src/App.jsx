@@ -74,7 +74,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-parchment font-sans text-stone-900 mesh-bg overflow-hidden relative">
-      <Header isAppLaunched={isAppLaunched} onToggleApp={() => setIsAppLaunched(!isAppLaunched)} />
+      <Header 
+        isAppLaunched={isAppLaunched} 
+        onSearchAgain={() => {
+          setSelectedCard(null);
+          setSearchResults([]);
+        }} 
+      />
       
       <main className="max-w-7xl mx-auto px-6 py-8 relative z-10">
         

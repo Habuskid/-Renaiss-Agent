@@ -112,13 +112,14 @@ body {
 }
 
 @keyframes float3d {
-  0% { transform: translateY(0px) rotateX(5deg) rotateY(-5deg); }
-  50% { transform: translateY(-15px) rotateX(10deg) rotateY(0deg); }
-  100% { transform: translateY(0px) rotateX(5deg) rotateY(-5deg); }
+  0% { transform: translateY(0px) rotateX(4deg) rotateY(-4deg); }
+  50% { transform: translateY(-20px) rotateX(8deg) rotateY(4deg) scale(1.02); }
+  100% { transform: translateY(0px) rotateX(4deg) rotateY(-4deg); }
 }
 
 .animate-float-3d {
   animation: float3d 8s ease-in-out infinite;
   transform-style: preserve-3d;
-  perspective: 1000px;
+  perspective: 1200px;
+  will-change: transform;
 }

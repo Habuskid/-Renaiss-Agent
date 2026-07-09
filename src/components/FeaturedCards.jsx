@@ -28,8 +28,8 @@ export default function FeaturedCards({ cards, onSelect }) {
             className={`
               bg-white border border-stone-200/80 
               rounded-xl p-4 cursor-pointer shadow-md
-              hover:shadow-xl hover:-translate-y-2 hover:border-indigo-300/80
-              transition-all duration-300 card-shine
+              hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] hover:-translate-y-6 hover:scale-110 hover:border-indigo-300/80
+              transition-all duration-500 ease-out card-shine
               delay-${(idx + 1) * 100}
               animate-fade-up
             `}

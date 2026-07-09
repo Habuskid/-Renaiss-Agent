@@ -125,16 +125,22 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
     }
 
     return (
-      <div className="bg-gradient-to-br from-white to-stone-50/50 backdrop-blur-sm rounded-xl p-8 border border-stone-200/50 shadow-lg flex flex-col items-center justify-center h-full min-h-[300px] animate-fade-up text-center">
-        <SparklesIcon className="w-10 h-10 text-amber-500 mb-4" />
-        <h3 className="text-lg font-bold text-stone-900 mb-2">Ready for AI Analysis</h3>
-        <p className="text-sm text-stone-500 mb-6 max-w-[250px]">Generate a fair market value range and conviction rating using live data.</p>
+      <div className="bg-gradient-to-br from-white to-stone-50/50 backdrop-blur-sm rounded-2xl p-8 border border-stone-200/50 shadow-xl flex flex-col items-center justify-center h-full min-h-[300px] animate-fade-up text-center relative overflow-hidden group">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+        <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl flex items-center justify-center shadow-inner mb-6 border border-white">
+          <SparklesIcon className="w-8 h-8 text-indigo-600" />
+        </div>
+        <h3 className="text-xl font-bold text-stone-900 mb-2">Ready for AI Analysis</h3>
+        <p className="text-sm text-stone-500 mb-8 max-w-[250px] leading-relaxed">Generate a fair market value range and conviction rating using live data.</p>
         <button 
           onClick={runAnalysis}
-          className="bg-stone-900 text-white px-6 py-2.5 rounded-full font-medium hover:bg-stone-800 transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-2 mb-4"
+          className="relative overflow-hidden bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-8 py-3.5 rounded-full font-bold shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 mb-4"
         >
-          <SparklesIcon className="w-4 h-4" />
-          Generate Insight ({3 - usageData.count} left)
+          <span className="relative z-10 flex items-center gap-2">
+            <SparklesIcon className="w-5 h-5" />
+            Generate Insight ({3 - usageData.count} left)
+          </span>
+          <div className="absolute inset-0 bg-white/20 translate-y-full hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
         </button>
       </div>
     );
