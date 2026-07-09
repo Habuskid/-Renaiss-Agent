@@ -15,8 +15,8 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
     const count = parseInt(localStorage.getItem('renaiss_ai_usage') || '0', 10);
     const resetTime = parseInt(localStorage.getItem('renaiss_ai_reset') || '0', 10);
     
-    // If the 12 hour timer has expired, reset the count to 0
-    if (resetTime > 0 && Date.now() > resetTime) {
+    // If the 30-minute timer has expired, OR if they used the app before the timer feature was added
+    if ((resetTime > 0 && Date.now() > resetTime) || (count >= 3 && !resetTime)) {
       localStorage.setItem('renaiss_ai_usage', '0');
       localStorage.setItem('renaiss_ai_reset', '0');
       return { count: 0, resetTime: 0 };
@@ -49,9 +49,9 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
       const newCount = usageData.count + 1;
       let newResetTime = usageData.resetTime;
       
-      // Start the 12-hour cooldown timer on the first usage
-      if (newCount === 1) {
-        newResetTime = Date.now() + (12 * 60 * 60 * 1000);
+      // Start the 30-minute cooldown timer on the first usage
+      if (newCount === 1 || !newResetTime) {
+        newResetTime = Date.now() + (30 * 60 * 1000);
         localStorage.setItem('renaiss_ai_reset', newResetTime.toString());
       }
       
@@ -101,9 +101,9 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
 
   if (!hasStarted) {
     if (usageData.count >= 3) {
-      // Calculate remaining hours
+      // Calculate remaining minutes
       const remainingMs = usageData.resetTime - Date.now();
-      const remainingHours = Math.max(1, Math.ceil(remainingMs / (1000 * 60 * 60)));
+      const remainingMinutes = Math.max(1, Math.ceil(remainingMs / (1000 * 60)));
 
       return (
         <div className="bg-gradient-to-br from-stone-50 to-stone-100 backdrop-blur-sm rounded-xl p-8 border border-stone-200/50 shadow-inner flex flex-col items-center justify-center h-full min-h-[300px] animate-fade-up text-center">
@@ -115,7 +115,7 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
             className="bg-stone-300 text-stone-500 px-6 py-2.5 rounded-full font-medium cursor-not-allowed shadow-inner flex items-center gap-2 mb-4"
           >
             <ArrowPathIcon className="w-4 h-4" />
-            Resets in {remainingHours} hours
+            Resets in {remainingMinutes} {remainingMinutes === 1 ? 'minute' : 'minutes'}
           </button>
           <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold text-stone-400 bg-stone-200/50 px-3 py-1.5 rounded-full border border-stone-200">
             3 / 3 Used
