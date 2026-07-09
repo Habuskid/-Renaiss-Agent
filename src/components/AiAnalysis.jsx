@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { analyzeCard } from '../services/gemini.js';
 import { formatUSD } from '../utils/formatters.js';
 import StarRating from './StarRating.jsx';
@@ -178,29 +178,41 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
   }
 
   return (
-    <div className="bg-white/90 backdrop-blur-md rounded-2xl p-8 border border-stone-200/50 shadow-sm h-full flex flex-col min-h-[300px] animate-fade-up card-shine">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-stone-900 text-white rounded-xl flex items-center justify-center shadow-md">
-          <AiIcon className="w-5 h-5" />
+    <div className="relative rounded-2xl p-8 border border-stone-200/50 bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-full flex flex-col min-h-[300px] animate-fade-up overflow-hidden group">
+      
+      {/* Decorative background glow */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-indigo-500/10 rounded-full blur-[80px] -z-10 group-hover:scale-110 transition-transform duration-700"></div>
+
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="absolute inset-0 bg-stone-900 blur-sm opacity-20 rounded-xl"></div>
+            <div className="relative w-11 h-11 bg-gradient-to-b from-stone-800 to-stone-900 text-white rounded-xl flex items-center justify-center border border-stone-700/50 shadow-lg">
+              <AiIcon className="w-5 h-5 text-blue-400" />
+            </div>
+          </div>
+          <div>
+            <h2 className="font-display font-bold text-stone-900 tracking-tight text-xl">AI Market Analysis</h2>
+            <p className="text-xs text-stone-500 font-medium">Real-time intelligence engine</p>
+          </div>
         </div>
-        <h2 className="font-display font-bold text-stone-900 tracking-tight text-xl">AI Market Analysis</h2>
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-200/50">
+          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+          <span className="text-[10px] font-bold text-green-700 uppercase tracking-widest">Verified</span>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-6 mb-6">
-        {/* Terminal/JSON Block */}
-        <div className="bg-slate-900 rounded-xl p-5 shadow-inner border border-slate-800 relative overflow-hidden group animate-fade-up delay-100">
-          <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-              <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M4 18h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              Terminal Output
-            </span>
-            <span className="text-[9px] text-green-400 font-mono flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> VERIFIED
-            </span>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {/* Terminal/JSON Block - Sleek dark mode */}
+        <div className="md:col-span-2 bg-[#0A0A0A] rounded-xl p-5 border border-stone-800/80 relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-50"></div>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+            <span className="ml-3 text-[10px] font-mono text-stone-500">renaiss-terminal ~ /output</span>
           </div>
-          <pre className="font-mono text-[11px] text-slate-300 overflow-x-auto leading-relaxed">
+          <pre className="font-mono text-xs text-blue-100/80 overflow-x-auto leading-relaxed">
             <code>
 {`{
   "asset": "${card?.name}",
@@ -213,38 +225,52 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
           </pre>
         </div>
 
-        {/* Human Readable Blocks */}
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6 px-2 animate-fade-up delay-200">
-          <div>
-            <p className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-1">Fair Value Range</p>
-            <p className="text-xl font-bold text-stone-900">
-              {formatUSD(analysis.fairValueLow)} - {formatUSD(analysis.fairValueHigh)}
-            </p>
-          </div>
-          <div>
-            <p className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-1">Buy Window</p>
-            <p className={`text-xl ${getBuyWindowColor(analysis.buyWindow)}`}>
-              {analysis.buyWindow}
-            </p>
-          </div>
-          <div>
-            <p className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-1.5">Market Trend</p>
+        {/* Value Range Card */}
+        <div className="bg-gradient-to-br from-stone-50 to-white rounded-xl p-5 border border-stone-200/60 shadow-sm relative overflow-hidden group/card">
+          <div className="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Fair Value Range</p>
+          <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-stone-900 to-stone-600 mb-1">
+            {formatUSD(analysis.fairValueLow)} <span className="text-stone-300 font-light mx-1">-</span> {formatUSD(analysis.fairValueHigh)}
+          </p>
+          <p className="text-xs text-stone-400 font-medium border-t border-stone-100 pt-2 mt-2">Based on historical liquidity</p>
+        </div>
+
+        {/* Buy Window Card */}
+        <div className="bg-gradient-to-br from-stone-50 to-white rounded-xl p-5 border border-stone-200/60 shadow-sm relative overflow-hidden group/card">
+          <div className={`absolute right-0 top-0 w-24 h-24 rounded-full blur-2xl -mr-10 -mt-10 opacity-0 group-hover/card:opacity-50 transition-opacity ${analysis.buyWindow === 'Now' ? 'bg-green-100' : analysis.buyWindow === 'Wait' ? 'bg-yellow-100' : 'bg-red-100'}`}></div>
+          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Buy Window</p>
+          <p className={`text-2xl font-display font-bold tracking-tight ${getBuyWindowColor(analysis.buyWindow)}`}>
+            {analysis.buyWindow}
+          </p>
+          <p className="text-xs text-stone-400 font-medium border-t border-stone-100 pt-2 mt-2">Algorithmic recommendation</p>
+        </div>
+
+        {/* Trend Card */}
+        <div className="bg-gradient-to-br from-stone-50 to-white rounded-xl p-5 border border-stone-200/60 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">Market Trend</p>
+          <div className="mt-1">
             <TrendBadge trend={analysis.trend} />
           </div>
-          <div>
-            <p className="text-[11px] font-bold text-stone-500 uppercase tracking-widest mb-1.5">Conviction</p>
+        </div>
+
+        {/* Conviction Card */}
+        <div className="bg-gradient-to-br from-stone-50 to-white rounded-xl p-5 border border-stone-200/60 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">Conviction Rating</p>
+          <div className="mt-1">
             <StarRating rating={analysis.rating} />
           </div>
         </div>
       </div>
 
-      <div className="mt-auto animate-fade-up delay-300">
-        <p className="text-[11px] font-bold text-stone-700 uppercase tracking-widest mb-3 border-b border-stone-100 pb-2">Analyst Insight</p>
-        <div className="px-2">
-          <p className="text-sm text-stone-800 leading-relaxed font-medium">
-            {analysis.insight}
-          </p>
-        </div>
+      <div className="mt-auto pt-6 border-t border-stone-100 relative">
+        <div className="absolute top-0 left-0 w-12 h-[1px] bg-gradient-to-r from-blue-500 to-transparent"></div>
+        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-3 flex items-center gap-2">
+          <SparklesIcon className="w-3 h-3" />
+          Analyst Insight
+        </p>
+        <p className="text-sm text-stone-700 leading-relaxed font-medium">
+          {analysis.insight}
+        </p>
       </div>
     </div>
   );

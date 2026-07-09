@@ -68,85 +68,90 @@ Respond ONLY with this exact JSON (no markdown, no explanation). Ensure the insi
     }
   };
 
-  try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
-
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      
-      // Fallback for API Rate Limits (429) to ensure the demo never breaks
-      if (res.status === 429 || errData.error?.message?.includes('Quota') || errData.error?.message?.includes('rate')) {
-        console.warn("Gemini API rate limited. Falling back to realistic mock data.");
-        
-        // Ensure d30 is a number for our mock calculation
-        const deltaNum = typeof d30 === 'number' ? d30 : parseFloat(d30) || 0;
-        const basePrice = card.priceUsdCents || 5000;
-        
-        return {
-          trend: deltaNum > 2 ? "Rising" : deltaNum < -2 ? "Cooling" : "Stable",
-          fairValueLow: Math.floor(basePrice * 0.9),
-          fairValueHigh: Math.floor(basePrice * 1.15),
-          buyWindow: deltaNum > 0 ? "Now" : "Wait",
-          rating: 4,
-          insight: `System operating via cached data due to extreme network traffic. Historical trends suggest steady momentum based on the ${d30}% 30-day delta and strong liquidity.`
-        };
-      }
-      
-      throw new Error(errData.error?.message || "Failed to fetch analysis from Gemini API");
-    }
-
-    const data = await res.json();
-    let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-    
-    // Clean markdown wrappers if any
-    rawText = rawText.replace(/```json|```/gi, '').trim();
-
-    // Aggressively replace literal newlines with spaces to avoid 'unterminated string' errors 
-    // when Gemini accidentally outputs actual line breaks inside the insight string
-    let parsed;
+  const MAX_RETRIES = 3;
+  let attempt = 0;
+  
+  while (attempt <= MAX_RETRIES) {
     try {
-        parsed = JSON.parse(rawText);
-    } catch (parseErr) {
-        try {
-            // Indestructible Regex Fallback: Manually extract fields from broken/cut-off JSON
-            const trend = rawText.match(/"trend"\s*:\s*"([^"]+)"/i)?.[1] || "Stable";
-            const fairValueLow = parseInt(rawText.match(/"fairValueLow"\s*:\s*(\d+)/i)?.[1] || "0", 10);
-            const fairValueHigh = parseInt(rawText.match(/"fairValueHigh"\s*:\s*(\d+)/i)?.[1] || "0", 10);
-            const buyWindow = rawText.match(/"buyWindow"\s*:\s*"([^"]+)"/i)?.[1] || "Wait";
-            const rating = parseInt(rawText.match(/"rating"\s*:\s*(\d+)/i)?.[1] || "3", 10);
-            
-            // Extract insight (everything after "insight": ")
-            let insight = "Data received but insight text was cut off.";
-            const insightMatch = rawText.match(/"insight"\s*:\s*"([\s\S]*)/i);
-            if (insightMatch) {
-                // Remove trailing quotes, brackets, and clean up newlines
-                insight = insightMatch[1].replace(/["}\]]+$/, '').replace(/\n/g, ' ').trim();
-            }
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
 
-            parsed = { trend, fairValueLow, fairValueHigh, buyWindow, rating, insight };
-            
-            if (fairValueLow === 0 && fairValueHigh === 0) {
-               throw new Error("Could not salvage data");
-            }
-        } catch (fatalErr) {
-            console.error("Gemini Raw Output:", rawText);
-            throw new Error(`AI generated invalid syntax. Raw text: ${rawText.substring(0, 100)}...`);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        
+        // If it's a 429 or Quota error, and we have retries left, wait and try again
+        if ((res.status === 429 || errData.error?.message?.includes('Quota') || errData.error?.message?.includes('rate')) && attempt < MAX_RETRIES) {
+          attempt++;
+          const delayMs = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
+          console.warn(`Gemini API rate limited. Retrying in ${delayMs}ms... (Attempt ${attempt} of ${MAX_RETRIES})`);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+          continue;
         }
-    }
+        
+        throw new Error(errData.error?.message || "Failed to fetch analysis from Gemini API");
+      }
 
-    const requiredKeys = ['trend', 'fairValueLow', 'fairValueHigh', 'buyWindow', 'rating', 'insight'];
-    for (const key of requiredKeys) {
-      if (!(key in parsed)) {
-        throw new Error(`Missing key in Gemini response: ${key}`);
+      const data = await res.json();
+      let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+      
+      // Clean markdown wrappers if any
+      rawText = rawText.replace(/```json|```/gi, '').trim();
+
+      // Aggressively replace literal newlines with spaces to avoid 'unterminated string' errors 
+      let parsed;
+      try {
+          parsed = JSON.parse(rawText);
+      } catch (parseErr) {
+          try {
+              // Indestructible Regex Fallback: Manually extract fields from broken/cut-off JSON
+              const trend = rawText.match(/"trend"\s*:\s*"([^"]+)"/i)?.[1] || "Stable";
+              const fairValueLow = parseInt(rawText.match(/"fairValueLow"\s*:\s*(\d+)/i)?.[1] || "0", 10);
+              const fairValueHigh = parseInt(rawText.match(/"fairValueHigh"\s*:\s*(\d+)/i)?.[1] || "0", 10);
+              const buyWindow = rawText.match(/"buyWindow"\s*:\s*"([^"]+)"/i)?.[1] || "Wait";
+              const rating = parseInt(rawText.match(/"rating"\s*:\s*(\d+)/i)?.[1] || "3", 10);
+              
+              let insight = "Data received but insight text was cut off.";
+              const insightMatch = rawText.match(/"insight"\s*:\s*"([\s\S]*)/i);
+              if (insightMatch) {
+                  insight = insightMatch[1].replace(/["}\]]+$/, '').replace(/\n/g, ' ').trim();
+              }
+
+              parsed = { trend, fairValueLow, fairValueHigh, buyWindow, rating, insight };
+              
+              if (fairValueLow === 0 && fairValueHigh === 0) {
+                 throw new Error("Could not salvage data");
+              }
+          } catch (fatalErr) {
+              console.error("Gemini Raw Output:", rawText);
+              throw new Error(`AI generated invalid syntax. Raw text: ${rawText.substring(0, 100)}...`);
+          }
+      }
+
+      const requiredKeys = ['trend', 'fairValueLow', 'fairValueHigh', 'buyWindow', 'rating', 'insight'];
+      for (const key of requiredKeys) {
+        if (!(key in parsed)) {
+          throw new Error(`Missing key in Gemini response: ${key}`);
+        }
+      }
+
+      return parsed;
+      
+    } catch (err) {
+      // If it's a network error and we have retries left, retry
+      if (err.message === "Failed to fetch" && attempt < MAX_RETRIES) {
+          attempt++;
+          const delayMs = Math.pow(2, attempt) * 1000;
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+          continue;
+      }
+      
+      // If we've exhausted retries or hit a hard error, throw it
+      if (attempt >= MAX_RETRIES || (!err.message?.includes('Failed to fetch') && !err.message?.includes('rate'))) {
+          throw new Error(`AI Analysis failed: ${err.message}`);
       }
     }
-
-    return parsed;
-  } catch (err) {
-    throw new Error(`AI Analysis failed: ${err.message}`);
   }
 }
