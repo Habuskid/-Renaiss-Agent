@@ -1,6 +1,6 @@
 import { ScaleIcon, ArrowRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
-export default function Header({ isAppLaunched, onToggleApp }) {
+export default function Header({ isAppLaunched, onSearchAgain }) {
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-white/70 backdrop-blur-md border-b border-stone-200/50 shadow-sm transition-all duration-300">
       <div className="flex items-center gap-3">
