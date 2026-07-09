@@ -93,12 +93,29 @@ Respond ONLY with this exact JSON (no markdown, no explanation). Ensure the insi
         parsed = JSON.parse(rawText);
     } catch (parseErr) {
         try {
-            // Fallback: strip literal newlines that break JSON.parse
-            const safeText = rawText.replace(/\n/g, ' ').replace(/\r/g, ' ');
-            parsed = JSON.parse(safeText);
-        } catch (fallbackErr) {
+            // Indestructible Regex Fallback: Manually extract fields from broken/cut-off JSON
+            const trend = rawText.match(/"trend"\s*:\s*"([^"]+)"/i)?.[1] || "Stable";
+            const fairValueLow = parseInt(rawText.match(/"fairValueLow"\s*:\s*(\d+)/i)?.[1] || "0", 10);
+            const fairValueHigh = parseInt(rawText.match(/"fairValueHigh"\s*:\s*(\d+)/i)?.[1] || "0", 10);
+            const buyWindow = rawText.match(/"buyWindow"\s*:\s*"([^"]+)"/i)?.[1] || "Wait";
+            const rating = parseInt(rawText.match(/"rating"\s*:\s*(\d+)/i)?.[1] || "3", 10);
+            
+            // Extract insight (everything after "insight": ")
+            let insight = "Data received but insight text was cut off.";
+            const insightMatch = rawText.match(/"insight"\s*:\s*"([\s\S]*)/i);
+            if (insightMatch) {
+                // Remove trailing quotes, brackets, and clean up newlines
+                insight = insightMatch[1].replace(/["}\]]+$/, '').replace(/\n/g, ' ').trim();
+            }
+
+            parsed = { trend, fairValueLow, fairValueHigh, buyWindow, rating, insight };
+            
+            if (fairValueLow === 0 && fairValueHigh === 0) {
+               throw new Error("Could not salvage data");
+            }
+        } catch (fatalErr) {
             console.error("Gemini Raw Output:", rawText);
-            throw new Error(`JSON parsing failed. Raw output was: ${rawText.substring(0, 100)}...`);
+            throw new Error(`AI generated invalid syntax. Raw text: ${rawText.substring(0, 100)}...`);
         }
     }
 

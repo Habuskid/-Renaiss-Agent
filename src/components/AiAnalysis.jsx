@@ -113,10 +113,6 @@ export default function AiAnalysis({ card, details, trades, fmvSeries }) {
           <SparklesIcon className="w-4 h-4" />
           Generate Insight ({3 - usageCount} left)
         </button>
-        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold text-stone-400 bg-stone-100/80 px-3 py-1.5 rounded-full border border-stone-200/60">
-          <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
-          Free Tier API • 15 Requests / Min
-        </div>
       </div>
     );
   }
